@@ -16,3 +16,7 @@ output
 #Acredito que e apenas 
 #fazer a transportas,
 #ficam na mesma orientação
+
+WeaponType.PISTOL: 0
+WeaponType.ASSAULT_RIFLE: 1
+WeaponType.ROCKET_LAUNCHER: 2

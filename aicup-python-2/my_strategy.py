@@ -25,25 +25,29 @@ class MyStrategy:
         #Ira em direção a arma
         #Se ja tiver uma arma, ira em direção
         #Ao Inimigo
-        
+        procurando_inimigo = False
+
         if unit.weapon is None and nearest_weapon is not None:
             target_pos = nearest_weapon.position
         elif unit.health < 90 and nearest_health is not None:
             target_pos = nearest_health.position            
         elif nearest_enemy is not None:
             target_pos = nearest_enemy.position
+            procurando_inimigo = True
+
         debug.draw(model.CustomData.Log("Txarget pos: {}".format(target_pos)))
         aim = model.Vec2Double(0, 0)
         if nearest_enemy is not None:
             aim = model.Vec2Double( nearest_enemy.position.x - unit.position.x, nearest_enemy.position.y - unit.position.y)
+
         jump = target_pos.y > unit.position.y
         if target_pos.x > unit.position.x and game.level.tiles[int(unit.position.x + 1)][int(unit.position.y)] == model.Tile.WALL:
             jump = True
         if target_pos.x < unit.position.x and game.level.tiles[int(unit.position.x - 1)][int(unit.position.y)] == model.Tile.WALL:
             jump = True
-        jump = True #The unit all need JUMP
+        #if procurando_inimigo :
+        #    jump = True
         
-        #
         '''
         print("unit" , unit)
         print("unit.mines" , unit.mines)
@@ -68,13 +72,18 @@ class MyStrategy:
         '''
 
         plat_mine_command = True
-        if unit.mines > 0:
+        #Deve ter pelo menos uma mina
+        #E não pode estar na escada
+        if unit.mines > 0 and unit.on_ladder == False:
             jump = False
             plat_mine_command = True
-        else :
-            jump = True
-            plat_mine_command = False
         
+        #Troca de Arma
+        #Se tiver com uma PISTOLA troca, por qualquer outra
+        troca_arma = False
+        if unit.weapon is not None:
+            if unit.weapon.typ == 2 or unit.weapon.typ == 2:
+                troca_arma = True
         
         return model.UnitAction(
             velocity=target_pos.x - unit.position.x,
@@ -83,5 +92,5 @@ class MyStrategy:
             aim=aim,
             shoot=True,
             reload=False,
-            swap_weapon=True,
+            swap_weapon=troca_arma,
             plant_mine=plat_mine_command)
