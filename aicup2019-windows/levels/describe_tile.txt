@@ -1,0 +1,18 @@
+. Empty/Vazio         0
+# Wall Parede/Piso    1
+^ Platform/Plataforma 2
+H Ladder/Escada       3
+T JumpPad/Pular       4
+P unit/Player
+
+arquivo.txt
+i30 linhas
+j40 colunas
+
+output
+40 linhas
+30 colunas
+
+#Acredito que e apenas 
+#fazer a transportas,
+#ficam na mesma orientação

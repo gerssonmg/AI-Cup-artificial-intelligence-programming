@@ -29,15 +29,20 @@ class Runner:
                 print("THE AND")
                 break
             player_view = message.player_view
+
+            #print("Level:" , player_view.game.level)
             
             actions = {}
+            cont = 0
             for unit in player_view.game.units:
-                print("Unit: " , unit)
+                #print("cont = ", cont , " >>  my_id", player_view.my_id)
+                #print("cont = ", cont , " >>   unit", unit)
+                #print("cont = ", cont , " >>units::", player_view.game.units , "XXX")
+                #print("cont = ", cont , " >>game::", player_view.game , "YYY")
+                cont += 1
                 if unit.player_id == player_view.my_id:
-                    actions[unit.id] = strategy.get_action(
-                        unit, player_view.game, debug)
-            model.PlayerMessageGame.ActionMessage(
-                model.Versioned(actions)).write_to(self.writer)
+                    actions[unit.id] = strategy.get_action(unit, player_view.game, debug)
+            model.PlayerMessageGame.ActionMessage(model.Versioned(actions)).write_to(self.writer)
             self.writer.flush()
 
 
