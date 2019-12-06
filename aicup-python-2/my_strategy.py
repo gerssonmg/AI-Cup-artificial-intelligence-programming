@@ -85,8 +85,22 @@ class MyStrategy:
             if unit.weapon.typ == 2 or unit.weapon.typ == 2:
                 troca_arma = True
         
+        
+       ## if unit.health >= 90:
+        ##    velocidade_deslocamento = target_pos.x - unit.position.x
+        ##else :
+        if True:
+            velocidade_deslocamento = target_pos.x - unit.position.x
+            if abs(velocidade_deslocamento) < 4 :
+                velocidade_deslocamento *= 3
+                if abs(velocidade_deslocamento) < 2 :
+                    velocidade_deslocamento *= 5
+
+        print("Velocity:",target_pos.x - unit.position.x)
+        print("velocidade_deslocamento:",velocidade_deslocamento)
+
         return model.UnitAction(
-            velocity=target_pos.x - unit.position.x,
+            velocity=velocidade_deslocamento,
             jump=jump,
             jump_down=not jump,
             aim=aim,
