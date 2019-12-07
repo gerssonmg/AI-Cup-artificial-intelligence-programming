@@ -31,14 +31,13 @@ class MyStrategy:
             target_pos = nearest_weapon.position
         elif unit.health < 90 and nearest_health is not None:
             target_pos = nearest_health.position            
+        elif unit.weapon is not None:
+            if unit.weapon.typ == 2 and nearest_weapon is not None:
+                target_pos = nearest_weapon.position
         elif nearest_enemy is not None:
             target_pos = nearest_enemy.position
             procurando_inimigo = True
 
-        if unit.weapon is not None:
-            if unit.weapon.typ == 2 and nearest_weapon is not None:
-                target_pos = nearest_weapon.position
-        
         debug.draw(model.CustomData.Log("Txarget pos: {}".format(target_pos)))
         aim = model.Vec2Double(0, 0)
         if nearest_enemy is not None:
