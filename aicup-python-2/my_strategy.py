@@ -31,8 +31,8 @@ class MyStrategy:
             target_pos = nearest_weapon.position
         elif unit.health < 90 and nearest_health is not None:
             target_pos = nearest_health.position            
-        elif unit.weapon is not None:
-            if unit.weapon.typ == 2 and nearest_weapon is not None:
+        elif unit.weapon is not None and unit.weapon.typ == 2:
+            if nearest_weapon is not None:
                 target_pos = nearest_weapon.position
         elif nearest_enemy is not None:
             target_pos = nearest_enemy.position
