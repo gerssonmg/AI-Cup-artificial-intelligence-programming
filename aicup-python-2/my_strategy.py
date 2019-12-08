@@ -5,6 +5,8 @@ class MyStrategy:
 
     def get_action(self, unit, game, debug):
                 
+        ####print("::GAME::", game.level)
+        ##print("::GAMETILES::", game.level.tiles)
         # Replace this code with your own
         def distance_sqr(a, b):
             return (a.x - b.x) ** 2 + (a.y - b.y) ** 2
@@ -13,12 +15,12 @@ class MyStrategy:
         
         nearest_health = min( filter(lambda box: isinstance( box.item, model.Item.HealthPack), game.loot_boxes), key=lambda box: distance_sqr(box.position, unit.position), default=None)
         
-        print("filter:", filter(lambda box: isinstance( box.item, model.Item.Weapon), game.loot_boxes))
+        ##print("filter:", filter(lambda box: isinstance( box.item, model.Item.Weapon), game.loot_boxes))
 
         #print("model.Item::", model.Item)
         #print("game.loot_boxes::", game.loot_boxes)
 
-        print("bullet:",game.bullets)
+        ##print("bullet:",game.bullets)
 
         target_pos = unit.position
 
@@ -45,11 +47,39 @@ class MyStrategy:
         if nearest_enemy is not None:
             aim = model.Vec2Double( nearest_enemy.position.x - unit.position.x, nearest_enemy.position.y - unit.position.y)
 
+        print("AIM:", aim)
+        print("unit.position.x:", unit.position.x)
+        print("unit.position.y:", unit.position.y)
+
+        
         jump = target_pos.y > unit.position.y
+        #Caso chegue em uma parede, ele pula
         if target_pos.x > unit.position.x and game.level.tiles[int(unit.position.x + 1)][int(unit.position.y)] == model.Tile.WALL:
             jump = True
         if target_pos.x < unit.position.x and game.level.tiles[int(unit.position.x - 1)][int(unit.position.y)] == model.Tile.WALL:
             jump = True
+
+        #posição do alvo maior que a posição minha atual
+        shooting_command = True
+
+        if target_pos.x > unit.position.x:
+            trunk_targetposition_x = int(target_pos.x)
+            trunk_position_y = int(target_pos.y)
+            for i in range( int(unit.position.x) , int(target_pos.x), 1 ):
+                print("game__tiles__middle::" , game.level.tiles[i][ int(unit.position.y)] )
+                if game.level.tiles[i][ int(unit.position.y)] == model.Tile.WALL:
+                    shooting_command = False
+                    print("NOOO SHOOTING MAN")
+
+        elif target_pos.x < unit.position.x:
+            trunk_targetposition_x = int(target_pos.x)
+            trunk_position_y = int(target_pos.y)
+            for i in range(  int(target_pos.x), int(unit.position.x) , 1 ):
+                print("game__tiles__middle::" , game.level.tiles[i][ int(unit.position.y)] )
+                if game.level.tiles[i][ int(unit.position.y)] == model.Tile.WALL:
+                    shooting_command = False
+                    print("NO NO NO NO SHOOTING MAN")
+
         #if procurando_inimigo :
         #    jump = True
         
@@ -102,15 +132,15 @@ class MyStrategy:
                 if abs(velocidade_deslocamento) < 2 :
                     velocidade_deslocamento *= 5
 
-        print("Velocity:",target_pos.x - unit.position.x)
-        print("velocidade_deslocamento:",velocidade_deslocamento)
+        ##print("Velocity:",target_pos.x - unit.position.x)
+        ##print("velocidade_deslocamento:",velocidade_deslocamento)
 
         return model.UnitAction(
             velocity=velocidade_deslocamento,
             jump=jump,
             jump_down=not jump,
             aim=aim,
-            shoot=True,
+            shoot= shooting_command,
             reload=False,
             swap_weapon=troca_arma,
             plant_mine=plat_mine_command)

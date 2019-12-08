@@ -46,6 +46,9 @@ class Runner:
                 if unit.player_id == player_view.my_id:
                     actions[unit.id] = strategy.get_action(unit, player_view.game, debug)
                 else:
+                    print("PLAYER:unit.position.x" , unit.position.x)
+                    print("PLAYER:unit.position.y" , unit.position.y)
+                    '''
                     print("PLAYER:unit" , unit)
                     print("PLAYER:unit.mines" , unit.mines)
                     print("PLAYER:unit.health" , unit.health)
@@ -60,7 +63,7 @@ class Runner:
                     print("PLAYER:unit.stand" , unit.stand)
                     print("PLAYER:unit.walked_right" , unit.walked_right)
                     print("PLAYER:unit_pos.y" , unit.position.y)
-                    
+                    '''
             model.PlayerMessageGame.ActionMessage(model.Versioned(actions)).write_to(self.writer)
             self.writer.flush()
 
