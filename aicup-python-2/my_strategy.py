@@ -47,15 +47,23 @@ class MyStrategy:
                     #Da vida
                     if distance_sqr(i.position, unit.position) < distance_sqr(i.position, inimigo.position):
                         health_mais_perto_de_mim.append(i)
+
+            print("TODOS PERTO DE MIM:", health_mais_perto_de_mim)
             if len(health_mais_perto_de_mim) > 0:
-                target_pos = health_mais_perto_de_mim[0].position
-        
+                target_pos = min( health_mais_perto_de_mim,
+                    key=lambda h_m_p_de_m: distance_sqr(h_m_p_de_m.position, unit.position),
+                    default=None).position
+                #target_pos = health_mais_perto_de_mim[0].position
+            print("MAIS PERTO DE MIM:", target_pos)
+            
         elif unit.weapon is not None and unit.weapon.typ == 2:
             if nearest_weapon is not None:
                 target_pos = nearest_weapon.position
         elif nearest_enemy is not None:
             target_pos = nearest_enemy.position
             procurando_inimigo = True
+
+        print("POS:", target_pos)
 
         debug.draw(model.CustomData.Log("Txarget pos: {}".format(target_pos)))
         aim = model.Vec2Double(0, 0)
@@ -96,25 +104,16 @@ class MyStrategy:
         #Deve ter pelo menos uma mina
         #E não pode estar na escada
         if unit.mines > 0 and unit.on_ladder == False:
-            jump = False
-            plat_mine_command = True
+            if game.level.tiles[ int(unit.position.x) ][int(unit.position.y - 1)] == model.Tile.WALL:
+                jump = False
+                plat_mine_command = True
         
         #Troca de Arma
-        #Se tiver com uma PISTOLA troca, por qualquer outra
-        troca_arma = False
-        if unit.weapon is not None:
-            if unit.weapon.typ == 2 or unit.weapon.typ == 2:
-                troca_arma = True
+        #Se tiver com uma ROCKET_LAUNCHER troca, por qualquer outra
+        troca_arma = MyStrategy.troca_arma(unit)
         
-        if True:
-            velocidade_deslocamento = target_pos.x - unit.position.x            
-            velocidade_deslocamento *= 30
-            
-            if abs(velocidade_deslocamento) < 4 :
-                velocidade_deslocamento *= 3
-                if abs(velocidade_deslocamento) < 2 :
-                    velocidade_deslocamento *= 5
-        
+        velocidade_deslocamento = MyStrategy.aumentar_velocidade(target_pos.x - unit.position.x)
+
         return model.UnitAction(
             velocity=velocidade_deslocamento,
             jump=jump,
@@ -124,3 +123,22 @@ class MyStrategy:
             reload=False,
             swap_weapon=troca_arma,
             plant_mine=plat_mine_command)
+
+    def aumentar_velocidade(velocidade_deslocamento):
+
+        velocidade_deslocamento *= 30
+            
+        if abs(velocidade_deslocamento) < 4 :
+            velocidade_deslocamento *= 10
+            if abs(velocidade_deslocamento) < 2 :
+                velocidade_deslocamento *= 50
+        
+        return velocidade_deslocamento
+
+    def troca_arma( unit ):
+        troca_arma = False
+        if unit.weapon is not None:
+            if unit.weapon.typ == 2:
+                troca_arma = True
+
+        return troca_arma
