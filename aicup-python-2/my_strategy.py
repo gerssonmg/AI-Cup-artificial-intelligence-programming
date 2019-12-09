@@ -5,8 +5,6 @@ class MyStrategy:
 
     def get_action(self, unit, game, debug):
                 
-        ####print("::GAME::", game.level)
-        ##print("::GAMETILES::", game.level.tiles)
         # Replace this code with your own
         def distance_sqr(a, b):
             return (a.x - b.x) ** 2 + (a.y - b.y) ** 2
@@ -15,12 +13,6 @@ class MyStrategy:
         
         nearest_health = min( filter(lambda box: isinstance( box.item, model.Item.HealthPack), game.loot_boxes), key=lambda box: distance_sqr(box.position, unit.position), default=None)
         
-        ##print("filter:", filter(lambda box: isinstance( box.item, model.Item.Weapon), game.loot_boxes))
-
-        #print("model.Item::", model.Item)
-        #print("game.loot_boxes::", game.loot_boxes)
-
-        ##print("bullet:",game.bullets)
 
         target_pos = unit.position
 
@@ -34,7 +26,30 @@ class MyStrategy:
         if unit.weapon is None and nearest_weapon is not None:
             target_pos = nearest_weapon.position
         elif unit.health < 90 and nearest_health is not None:
-            target_pos = nearest_health.position            
+            target_pos = nearest_health.position 
+
+            #Se tiver outro pacote mais perto de mim
+            #do que do inimigo, ira atraz dele
+
+            #Pega o Objeto inimigo
+            for j in game.units:
+                if unit.id != j.id:
+                    inimigo =  j        
+            print("BEGIN FOR")         
+            health_mais_perto_de_mim = []       
+            #Itera em todos os pacotes
+            for i in game.loot_boxes:        
+               #Se o pacote for de vida
+                if isinstance(i.item, model.Item.HealthPack):
+                    #print("loots.item:" , i)
+                
+                    #To mais perto que o inimigo
+                    #Da vida
+                    if distance_sqr(i.position, unit.position) < distance_sqr(i.position, inimigo.position):
+                        health_mais_perto_de_mim.append(i)
+            if len(health_mais_perto_de_mim) > 0:
+                target_pos = health_mais_perto_de_mim[0].position
+        
         elif unit.weapon is not None and unit.weapon.typ == 2:
             if nearest_weapon is not None:
                 target_pos = nearest_weapon.position
@@ -47,10 +62,9 @@ class MyStrategy:
         if nearest_enemy is not None:
             aim = model.Vec2Double( nearest_enemy.position.x - unit.position.x, nearest_enemy.position.y - unit.position.y)
 
-        print("AIM:", aim)
+        #print("AIM:", aim)
         print("unit.position.x:", unit.position.x)
         print("unit.position.y:", unit.position.y)
-
         
         jump = target_pos.y > unit.position.y
         #Caso chegue em uma parede, ele pula
@@ -64,44 +78,20 @@ class MyStrategy:
 
         if nearest_enemy.position.x > unit.position.x:
             for i in range( int(unit.position.x) , int(nearest_enemy.position.x), 1 ):
-                print("game__tiles__middle::" , game.level.tiles[i][ int(unit.position.y)] )
+                #print("game__tiles__middle::" , game.level.tiles[i][ int(unit.position.y)] )
                 if game.level.tiles[i][ int(unit.position.y)] == model.Tile.WALL:
                     shooting_command = False
                     print("NOOO SHOOTING MAN")
+                    break
 
         elif nearest_enemy.position.x < unit.position.x:
             for i in range(  int(nearest_enemy.position.x), int(unit.position.x) , 1 ):
-                print("game__tiles__middle::" , game.level.tiles[i][ int(unit.position.y)] )
+                #print("game__tiles__middle::" , game.level.tiles[i][ int(unit.position.y)] )
                 if game.level.tiles[i][ int(unit.position.y)] == model.Tile.WALL:
                     shooting_command = False
                     print("NO NO NO NO SHOOTING MAN")
-
-        #if procurando_inimigo :
-        #    jump = True
-        
-        '''
-        print("unit" , unit)
-        print("unit.mines" , unit.mines)
-        print("unit.health" , unit.health)
-        print("unit.weapon" , unit.weapon)
-        print("unit.id" , unit.id)
-        print("unit.jump_state" , unit.jump_state)
-        print("unit.on_ground" , unit.on_ground)
-        print("unit.on_ladder" , unit.on_ladder)
-        print("unit.player_id" , unit.player_id)
-        print("unit.position" , unit.position)
-        print("unit.size" , unit.size)
-        print("unit.stand" , unit.stand)
-        print("unit.walked_right" , unit.walked_right)
-        print("nearest_enemy" , nearest_enemy)
-        print("nearest_weapon" , nearest_weapon)
-        print("nearest_health" , nearest_health)
-        print("nearest_health.postion:" , nearest_health.position)        
-        print("target_pos.y" , target_pos.y)
-        print("unit_pos.y" , unit.position.y)
-        print("jump" , jump)    
-        '''
-
+                    break
+     
         plat_mine_command = True
         #Deve ter pelo menos uma mina
         #E não pode estar na escada
@@ -116,27 +106,15 @@ class MyStrategy:
             if unit.weapon.typ == 2 or unit.weapon.typ == 2:
                 troca_arma = True
         
-        
-        
-       ## if unit.health >= 90:
-        ##    velocidade_deslocamento = target_pos.x - unit.position.x
-        ##else :
         if True:
-            
-            velocidade_deslocamento = target_pos.x - unit.position.x
-            print("VV:::", velocidade_deslocamento)
-
+            velocidade_deslocamento = target_pos.x - unit.position.x            
             velocidade_deslocamento *= 30
-            print("VV:", velocidade_deslocamento)
             
             if abs(velocidade_deslocamento) < 4 :
                 velocidade_deslocamento *= 3
                 if abs(velocidade_deslocamento) < 2 :
                     velocidade_deslocamento *= 5
-
-        ##print("Velocity:",target_pos.x - unit.position.x)
-        ##print("velocidade_deslocamento:",velocidade_deslocamento)
-
+        
         return model.UnitAction(
             velocity=velocidade_deslocamento,
             jump=jump,
