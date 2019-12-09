@@ -62,19 +62,15 @@ class MyStrategy:
         #posição do alvo maior que a posição minha atual
         shooting_command = True
 
-        if target_pos.x > unit.position.x:
-            trunk_targetposition_x = int(target_pos.x)
-            trunk_position_y = int(target_pos.y)
-            for i in range( int(unit.position.x) , int(target_pos.x), 1 ):
+        if nearest_enemy.position.x > unit.position.x:
+            for i in range( int(unit.position.x) , int(nearest_enemy.position.x), 1 ):
                 print("game__tiles__middle::" , game.level.tiles[i][ int(unit.position.y)] )
                 if game.level.tiles[i][ int(unit.position.y)] == model.Tile.WALL:
                     shooting_command = False
                     print("NOOO SHOOTING MAN")
 
-        elif target_pos.x < unit.position.x:
-            trunk_targetposition_x = int(target_pos.x)
-            trunk_position_y = int(target_pos.y)
-            for i in range(  int(target_pos.x), int(unit.position.x) , 1 ):
+        elif nearest_enemy.position.x < unit.position.x:
+            for i in range(  int(nearest_enemy.position.x), int(unit.position.x) , 1 ):
                 print("game__tiles__middle::" , game.level.tiles[i][ int(unit.position.y)] )
                 if game.level.tiles[i][ int(unit.position.y)] == model.Tile.WALL:
                     shooting_command = False
@@ -126,7 +122,13 @@ class MyStrategy:
         ##    velocidade_deslocamento = target_pos.x - unit.position.x
         ##else :
         if True:
+            
             velocidade_deslocamento = target_pos.x - unit.position.x
+            print("VV:::", velocidade_deslocamento)
+
+            velocidade_deslocamento *= 30
+            print("VV:", velocidade_deslocamento)
+            
             if abs(velocidade_deslocamento) < 4 :
                 velocidade_deslocamento *= 3
                 if abs(velocidade_deslocamento) < 2 :
