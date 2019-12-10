@@ -8,9 +8,11 @@ class MyStrategy:
         # Replace this code with your own
         def distance_sqr(a, b):
             return (a.x - b.x) ** 2 + (a.y - b.y) ** 2
+
+
+
         nearest_enemy =  min( filter(lambda u: u.player_id != unit.player_id, game.units), key=lambda u: distance_sqr(u.position, unit.position), default=None)
         nearest_weapon = min( filter(lambda box: isinstance( box.item, model.Item.Weapon), game.loot_boxes), key=lambda box: distance_sqr(box.position, unit.position), default=None)
-        
         nearest_health = min( filter(lambda box: isinstance( box.item, model.Item.HealthPack), game.loot_boxes), key=lambda box: distance_sqr(box.position, unit.position), default=None)
         
 
@@ -22,6 +24,8 @@ class MyStrategy:
         #Se ja tiver uma arma, ira em direção
         #Ao Inimigo
         procurando_inimigo = False
+
+        desviar_de_bullet = False
 
         if unit.weapon is None and nearest_weapon is not None:
             target_pos = nearest_weapon.position
@@ -55,10 +59,18 @@ class MyStrategy:
                     default=None).position
                 #target_pos = health_mais_perto_de_mim[0].position
             print("MAIS PERTO DE MIM:", target_pos)
-            
+           
         elif unit.weapon is not None and unit.weapon.typ == 2:
             if nearest_weapon is not None:
                 target_pos = nearest_weapon.position
+        
+        elif len(game.bullets) > 0:
+            nearest_bullet = min( game.bullets, key=lambda bull: distance_sqr(bull.position, unit.position) )
+            print("ALL BULLETS:", game.bullets)
+            print("MIN BULLETS:", nearest_bullet)
+            target_pos = nearest_bullet.position
+            desviar_de_bullet = True
+
         elif nearest_enemy is not None:
             target_pos = nearest_enemy.position
             procurando_inimigo = True
@@ -86,7 +98,6 @@ class MyStrategy:
 
         if nearest_enemy.position.x > unit.position.x:
             for i in range( int(unit.position.x) , int(nearest_enemy.position.x), 1 ):
-                #print("game__tiles__middle::" , game.level.tiles[i][ int(unit.position.y)] )
                 if game.level.tiles[i][ int(unit.position.y)] == model.Tile.WALL:
                     shooting_command = False
                     print("NOOO SHOOTING MAN")
@@ -94,7 +105,6 @@ class MyStrategy:
 
         elif nearest_enemy.position.x < unit.position.x:
             for i in range(  int(nearest_enemy.position.x), int(unit.position.x) , 1 ):
-                #print("game__tiles__middle::" , game.level.tiles[i][ int(unit.position.y)] )
                 if game.level.tiles[i][ int(unit.position.y)] == model.Tile.WALL:
                     shooting_command = False
                     print("NO NO NO NO SHOOTING MAN")
@@ -113,6 +123,10 @@ class MyStrategy:
         troca_arma = MyStrategy.troca_arma(unit)
         
         velocidade_deslocamento = MyStrategy.aumentar_velocidade(target_pos.x - unit.position.x)
+
+        if desviar_de_bullet == True:
+            velocidade_deslocamento *= -1
+            jump = not jump
 
         return model.UnitAction(
             velocity=velocidade_deslocamento,
