@@ -27,6 +27,7 @@ class MyStrategy:
 
         desviar_de_bullet = False
 
+
         if unit.weapon is None and nearest_weapon is not None:
             target_pos = nearest_weapon.position
         elif unit.health < 90 and nearest_health is not None:
@@ -65,11 +66,21 @@ class MyStrategy:
                 target_pos = nearest_weapon.position
         
         elif len(game.bullets) > 0:
-            nearest_bullet = min( game.bullets, key=lambda bull: distance_sqr(bull.position, unit.position) )
-            print("ALL BULLETS:", game.bullets)
-            print("MIN BULLETS:", nearest_bullet)
-            target_pos = nearest_bullet.position
-            desviar_de_bullet = True
+            #Pega o Objeto inimigo
+            for j in game.units:
+                if unit.id != j.id:
+                    inimigo =  j
+            lista_bullet_inimigo = list(filter(lambda bull:  (bull.unit_id == inimigo.id), game.bullets))
+            for i in lista_bullet_inimigo:
+                print("INIMIGO BULLET:", i)
+
+            if len(lista_bullet_inimigo) :
+                #nearest_bullet = min( game.bullets, key=lambda bull: distance_sqr(bull.position, unit.position) )
+                nearest_bullet = min( lista_bullet_inimigo, key=lambda bull: distance_sqr(bull.position, unit.position) )
+                print("ALL BULLETS:", game.bullets)
+                print("MIN BULLETS:", nearest_bullet)
+                target_pos = nearest_bullet.position
+                desviar_de_bullet = True
 
         elif nearest_enemy is not None:
             target_pos = nearest_enemy.position
@@ -136,17 +147,18 @@ class MyStrategy:
             shoot= shooting_command,
             reload=False,
             swap_weapon=troca_arma,
-            plant_mine=plat_mine_command)
+            #plant_mine=plat_mine_command)
+            plant_mine=False)
 
     def aumentar_velocidade(velocidade_deslocamento):
 
-        velocidade_deslocamento *= 30
+        velocidade_deslocamento *= 10
             
-        if abs(velocidade_deslocamento) < 4 :
+        '''if abs(velocidade_deslocamento) < 4 :
             velocidade_deslocamento *= 10
             if abs(velocidade_deslocamento) < 2 :
-                velocidade_deslocamento *= 50
-        
+                velocidade_deslocamento *= 10
+        '''
         return velocidade_deslocamento
 
     def troca_arma( unit ):
