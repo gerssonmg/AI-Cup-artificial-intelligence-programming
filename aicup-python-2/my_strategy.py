@@ -28,10 +28,11 @@ class MyStrategy:
 
         desviar_de_bullet = False
 
-
+        pega_vida = False
         if unit.weapon is None and nearest_weapon is not None:
             target_pos = nearest_weapon.position
         elif unit.health < 90 and nearest_health is not None:
+            pega_vida = True
             target_pos = nearest_health.position 
 
             #Se tiver outro pacote mais perto de mim
@@ -65,8 +66,9 @@ class MyStrategy:
         elif unit.weapon is not None and unit.weapon.typ == 2:
             if nearest_weapon is not None:
                 target_pos = nearest_weapon.position
-        
+            pega_vida = False
         elif len(game.bullets) > 0:
+            pega_vida = False
             #Pega o Objeto inimigo
             for j in game.units:
                 if unit.id != j.id:
@@ -84,6 +86,7 @@ class MyStrategy:
                 desviar_de_bullet = True
 
         elif nearest_enemy is not None:
+            pega_vida = False
             target_pos = nearest_enemy.position
             procurando_inimigo = True
 
@@ -134,10 +137,11 @@ class MyStrategy:
             jump = not jump
 
         jump_down = not jump
-        skill_plat_form = MyStrategy.skill_up_platform(unit, target_pos, game, jump)
-        if skill_plat_form == True:
-            jump = False
-            jump_down = False
+        if pega_vida == False:
+            skill_plat_form = MyStrategy.skill_up_platform(unit, target_pos, game, jump)
+            if skill_plat_form == True:
+                jump = False
+                jump_down = False
         
         return model.UnitAction(
             velocity=velocidade_deslocamento,
