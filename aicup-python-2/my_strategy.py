@@ -84,8 +84,12 @@ class MyStrategy:
                 print("MIN BULLETS:", nearest_bullet)
                 target_pos = nearest_bullet.position
                 desviar_de_bullet = True
-        elif nearest_enemy is not None:
-            pega_vida = False
+                if nearest_bullet.weapon_type != model.WeaponType.ROCKET_LAUNCHER :
+                    desviar_de_bullet = MyStrategy.skill_desviar_bullet_entre_paredes(target_pos, unit, game)
+
+        #elif nearest_enemy is not None:
+        if desviar_de_bullet == False and pega_vida == False and unit.weapon is not None and unit.weapon.typ != 2:
+            #pega_vida = False
             target_pos = nearest_enemy.position
             procurando_inimigo = True
 
@@ -135,6 +139,9 @@ class MyStrategy:
                     shooting_command = False
                     print("NO NO NO NO SHOOTING MAN")
                     break
+
+        
+         
          
         #Troca de Arma
         #Se tiver com uma ROCKET_LAUNCHER troca, por qualquer outra
@@ -222,3 +229,21 @@ class MyStrategy:
                 jump = False
                 plat_mine_command = True
         return 0
+
+    def skill_desviar_bullet_entre_paredes(target_pos, unit, game):
+        print("BEGIN skill_desviar_bullet_entre_paredes")
+        if target_pos.x > unit.position.x:
+            for i in range( int(unit.position.x) , int(target_pos.x), 1 ):
+                if game.level.tiles[i][ int(unit.position.y)] == model.Tile.WALL:
+                    print("NOOO TENHA MEDODO MAN")
+                    return False
+                    #desviar_de_bullet = False
+                    
+        elif target_pos.x < unit.position.x:
+            for i in range(  int(target_pos.x), int(unit.position.x) , 1 ):
+                if game.level.tiles[i][ int(unit.position.y)] == model.Tile.WALL:
+                    #desviar_de_bullet = False
+                    print("NO NO NO NO TENHA MEDO MAN")
+                    return False
+                    
+        return True

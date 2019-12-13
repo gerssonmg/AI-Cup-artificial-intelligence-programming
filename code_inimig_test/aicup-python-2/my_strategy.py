@@ -62,7 +62,8 @@ class MyStrategy:
                 #target_pos = health_mais_perto_de_mim[0].position
             print("MAIS PERTO DE MIM:", target_pos)
            
-        elif unit.weapon is not None and unit.weapon.typ == 2:
+        #############3#elif unit.weapon is not None and unit.weapon.typ == 2:
+        elif unit.weapon is not None and unit.weapon.typ == 0 or unit.weapon.typ == 1:
             if nearest_weapon is not None:
                 target_pos = nearest_weapon.position
         
@@ -165,7 +166,8 @@ class MyStrategy:
 
         troca_arma = False
         if unit.weapon is not None:
-            if unit.weapon.typ == 2:
+            if unit.weapon.typ == 0:
+            ###########if unit.weapon.typ == 2:
                 troca_arma = True
 
         return troca_arma
