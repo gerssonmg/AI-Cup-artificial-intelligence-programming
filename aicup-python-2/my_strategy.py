@@ -42,7 +42,7 @@ class MyStrategy:
             for j in game.units:
                 if unit.id != j.id:
                     inimigo =  j        
-            print("BEGIN FOR")         
+            ###print("BEGIN FOR")         
             health_mais_perto_de_mim = []       
             #Itera em todos os pacotes
             for i in game.loot_boxes:        
@@ -55,13 +55,13 @@ class MyStrategy:
                     if distance_sqr(i.position, unit.position) < distance_sqr(i.position, inimigo.position):
                         health_mais_perto_de_mim.append(i)
 
-            print("TODOS PERTO DE MIM:", health_mais_perto_de_mim)
+            ###print("TODOS PERTO DE MIM:", health_mais_perto_de_mim)
             if len(health_mais_perto_de_mim) > 0:
                 target_pos = min( health_mais_perto_de_mim,
                     key=lambda h_m_p_de_m: distance_sqr(h_m_p_de_m.position, unit.position),
                     default=None).position
                 #target_pos = health_mais_perto_de_mim[0].position
-            print("MAIS PERTO DE MIM:", target_pos)
+            ###print("MAIS PERTO DE MIM:", target_pos)
            
         elif unit.weapon is not None and unit.weapon.typ == 2:
             if nearest_weapon is not None:
@@ -74,14 +74,14 @@ class MyStrategy:
                 if unit.id != j.id:
                     inimigo =  j
             lista_bullet_inimigo = list(filter(lambda bull:  (bull.unit_id == inimigo.id), game.bullets))
-            for i in lista_bullet_inimigo:
-                print("INIMIGO BULLET:", i)
+            ###for i in lista_bullet_inimigo:
+                ###print("INIMIGO BULLET:", i)
 
             if len(lista_bullet_inimigo) :
                 #nearest_bullet = min( game.bullets, key=lambda bull: distance_sqr(bull.position, unit.position) )
                 nearest_bullet = min( lista_bullet_inimigo, key=lambda bull: distance_sqr(bull.position, unit.position) )
-                print("ALL BULLETS:", game.bullets)
-                print("MIN BULLETS:", nearest_bullet)
+                ###print("ALL BULLETS:", game.bullets)
+                ###print("MIN BULLETS:", nearest_bullet)
                 target_pos = nearest_bullet.position
                 desviar_de_bullet = True
                 if nearest_bullet.weapon_type != model.WeaponType.ROCKET_LAUNCHER :
@@ -93,7 +93,7 @@ class MyStrategy:
             target_pos = nearest_enemy.position
             procurando_inimigo = True
 
-        print("POS:", target_pos)
+        ###print("POS:", target_pos)
 
         debug.draw(model.CustomData.Log("Txarget pos: {}".format(target_pos)))
         aim = model.Vec2Double(0, 0)
@@ -101,8 +101,8 @@ class MyStrategy:
             aim = model.Vec2Double( nearest_enemy.position.x - unit.position.x, nearest_enemy.position.y - unit.position.y)
 
         #print("AIM:", aim)
-        print("unit.position.x:", unit.position.x)
-        print("unit.position.y:", unit.position.y)
+        ###print("unit.position.x:", unit.position.x)
+        ###print("unit.position.y:", unit.position.y)
         
         jump = target_pos.y > unit.position.y
 
@@ -113,14 +113,14 @@ class MyStrategy:
         abs_diference_posicao = abs(target_pos.x - unit.position.x)
         #Caso chegue em uma parede, ele pula
         if target_pos.x > unit.position.x and game.level.tiles[int(unit.position.x + 1)][int(unit.position.y)] == model.Tile.WALL:
-            print("TEM CHANCE DE PULAR PAREDE 01")
+            ###print("TEM CHANCE DE PULAR PAREDE 01")
             if abs_diference_posicao > 0.1:
-                print("JUMP PAREDE 01")
+                ###print("JUMP PAREDE 01")
                 jump = True
         if target_pos.x < unit.position.x and game.level.tiles[int(unit.position.x - 1)][int(unit.position.y)] == model.Tile.WALL:
-            print("TEM CHANCE DE PULAR PAREDE 02")
+            ###print("TEM CHANCE DE PULAR PAREDE 02")
             if abs_diference_posicao > 0.1:    
-                print("JUMP PAREDE 02")
+                ###print("JUMP PAREDE 02")
                 jump = True
 
 
@@ -131,13 +131,13 @@ class MyStrategy:
             for i in range( int(unit.position.x) , int(nearest_enemy.position.x), 1 ):
                 if game.level.tiles[i][ int(unit.position.y)] == model.Tile.WALL:
                     shooting_command = False
-                    print("NOOO SHOOTING MAN")
+                    ###print("NOOO SHOOTING MAN")
                     break
         elif nearest_enemy.position.x < unit.position.x:
             for i in range(  int(nearest_enemy.position.x), int(unit.position.x) , 1 ):
                 if game.level.tiles[i][ int(unit.position.y)] == model.Tile.WALL:
                     shooting_command = False
-                    print("NO NO NO NO SHOOTING MAN")
+                    ###print("NO NO NO NO SHOOTING MAN")
                     break
 
         
@@ -155,13 +155,13 @@ class MyStrategy:
 
         jump_down = not jump
         if pega_vida == False:
-            print("NAO TA INDO PEGAR VIDA")
+            ###print("NAO TA INDO PEGAR VIDA")
             skill_plat_form = MyStrategy.skill_up_platform(unit, target_pos, game, jump)
             if skill_plat_form == True:
                 jump = False
                 jump_down = False
-        else:
-            print("INDO PEGAR VIDA")
+        #else:
+            ###print("INDO PEGAR VIDA")
             
         
         return model.UnitAction(
@@ -199,24 +199,24 @@ class MyStrategy:
         #Deve verificar se esta sobre uma platform
         #Se estiver, e seu alvo estiver mais acima, ele deve parar de pular
         #E deve pular partindo dessa nova plataforma
-        print("ABAIXO:", game.level.tiles[ int(unit.position.x) ][int(unit.position.y - 1)])
+        ###print("ABAIXO:", game.level.tiles[ int(unit.position.x) ][int(unit.position.y - 1)])
 
         # Replace this code with your own
         def distance_sqrrr(a, b):
             return (a.x - b.x) ** 2 + (a.y - int(b.y-1)) ** 2
         d = distance_sqrrr ( unit.position, unit.position)
-        print("DISTANCIA BAIXO:", d)
+        ###print("DISTANCIA BAIXO:", d)
         
-        print("skilll_01:", MyStrategy.skill_jump_plat_variavel_global)
+        ###print("skilll_01:", MyStrategy.skill_jump_plat_variavel_global)
         if game.level.tiles[ int(unit.position.x) ][int(unit.position.y - 1)] == model.Tile.PLATFORM and jump == True and MyStrategy.skill_jump_plat_variavel_global != 1:
-            print("NO JUMP PLAT")
-            print("AND NO DOWN PLAT")
+            ###print("NO JUMP PLAT")
+            ###print("AND NO DOWN PLAT")
             MyStrategy.skill_jump_plat_variavel_global = 1
-            print("skilll_02:", MyStrategy.skill_jump_plat_variavel_global)
+            ###print("skilll_02:", MyStrategy.skill_jump_plat_variavel_global)
             return True
         
         if game.level.tiles[ int(unit.position.x) ][int(unit.position.y - 1)] != model.Tile.PLATFORM:
-            print("skilll_03:", MyStrategy.skill_jump_plat_variavel_global)
+            ###print("skilll_03:", MyStrategy.skill_jump_plat_variavel_global)
             MyStrategy.skill_jump_plat_variavel_global = 0
         return False
         
@@ -231,11 +231,11 @@ class MyStrategy:
         return 0
 
     def skill_desviar_bullet_entre_paredes(target_pos, unit, game):
-        print("BEGIN skill_desviar_bullet_entre_paredes")
+        ###print("BEGIN skill_desviar_bullet_entre_paredes")
         if target_pos.x > unit.position.x:
             for i in range( int(unit.position.x) , int(target_pos.x), 1 ):
                 if game.level.tiles[i][ int(unit.position.y)] == model.Tile.WALL:
-                    print("NOOO TENHA MEDODO MAN")
+                    ###print("NOOO TENHA MEDODO MAN")
                     return False
                     #desviar_de_bullet = False
                     
@@ -243,7 +243,7 @@ class MyStrategy:
             for i in range(  int(target_pos.x), int(unit.position.x) , 1 ):
                 if game.level.tiles[i][ int(unit.position.y)] == model.Tile.WALL:
                     #desviar_de_bullet = False
-                    print("NO NO NO NO TENHA MEDO MAN")
+                    ###print("NO NO NO NO TENHA MEDO MAN")
                     return False
                     
         return True
