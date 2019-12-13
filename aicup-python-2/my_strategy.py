@@ -84,7 +84,6 @@ class MyStrategy:
                 print("MIN BULLETS:", nearest_bullet)
                 target_pos = nearest_bullet.position
                 desviar_de_bullet = True
-
         elif nearest_enemy is not None:
             pega_vida = False
             target_pos = nearest_enemy.position
@@ -102,11 +101,24 @@ class MyStrategy:
         print("unit.position.y:", unit.position.y)
         
         jump = target_pos.y > unit.position.y
+
+        #Variavel criada
+        #Para evitar que a UNIT fique pulando
+        #Caso esteja colado em uma parede
+        #Mas mesmo que seu alvo esteja logo a baixo
+        abs_diference_posicao = abs(target_pos.x - unit.position.x)
         #Caso chegue em uma parede, ele pula
         if target_pos.x > unit.position.x and game.level.tiles[int(unit.position.x + 1)][int(unit.position.y)] == model.Tile.WALL:
-            jump = True
+            print("TEM CHANCE DE PULAR PAREDE 01")
+            if abs_diference_posicao > 0.1:
+                print("JUMP PAREDE 01")
+                jump = True
         if target_pos.x < unit.position.x and game.level.tiles[int(unit.position.x - 1)][int(unit.position.y)] == model.Tile.WALL:
-            jump = True
+            print("TEM CHANCE DE PULAR PAREDE 02")
+            if abs_diference_posicao > 0.1:    
+                print("JUMP PAREDE 02")
+                jump = True
+
 
         #posição do alvo maior que a posição minha atual
         shooting_command = True
@@ -117,15 +129,13 @@ class MyStrategy:
                     shooting_command = False
                     print("NOOO SHOOTING MAN")
                     break
-
         elif nearest_enemy.position.x < unit.position.x:
             for i in range(  int(nearest_enemy.position.x), int(unit.position.x) , 1 ):
                 if game.level.tiles[i][ int(unit.position.y)] == model.Tile.WALL:
                     shooting_command = False
                     print("NO NO NO NO SHOOTING MAN")
                     break
-     
-        
+         
         #Troca de Arma
         #Se tiver com uma ROCKET_LAUNCHER troca, por qualquer outra
         troca_arma = MyStrategy.troca_arma(unit)
@@ -138,10 +148,14 @@ class MyStrategy:
 
         jump_down = not jump
         if pega_vida == False:
+            print("NAO TA INDO PEGAR VIDA")
             skill_plat_form = MyStrategy.skill_up_platform(unit, target_pos, game, jump)
             if skill_plat_form == True:
                 jump = False
                 jump_down = False
+        else:
+            print("INDO PEGAR VIDA")
+            
         
         return model.UnitAction(
             velocity=velocidade_deslocamento,
